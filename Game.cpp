@@ -66,11 +66,11 @@ Taw* Game::findTaw(Point mousePosition)
 			return &greenTaws[taw];		
 }
 
-//void Game::startShootingProccess(Point mousePosition, Taw* chosenTaw)
-//{
-//	chosenTaw->calculateInitialVelocity(mousePosition)
-	//chosenTaw->shootingTaw(mousePosition);
-//}
+void Game::startShootingProccess(Point mousePosition, Taw* chosenTaw)
+{
+	chosenTaw->calculateInitialVelocity(mousePosition);
+	//shootingTaw(mousePosition, chosenTaw);
+}
 
 void Game::startGame(Window *window)
 {
