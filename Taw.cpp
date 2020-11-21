@@ -32,3 +32,29 @@ bool Taw::isYInRange(int y)
 {
 	return (y <= (pow(TAW_RADIUS, 2) - pow(xPosition, 2))) && (y >= (pow(xPosition, 2) - pow(TAW_RADIUS, 2)));
 }
+
+float Taw::measureAbsolute(Point mousePosition)
+{
+	return sqrt(pow(mousePosition.x - xPosition, 2) + pow(mousePosition.y - yPosition, 2));
+}
+
+float Taw::measureInitialVelocityX (int mouseXPosition, float distanceAbsolute)
+{
+	if (distanceAbsolute < THROW_RADIUS)
+		return (-1 * MAX_INITIAL_SPEED *((mouseXPosition - xPosition) / THROW_RADIUS));
+	return (-1 * MAX_INITIAL_SPEED *((mouseXPosition - xPosition) / distanceAbsolute));
+}
+
+float Taw::measureInitialVelocityY (int mouseYPosition, float distanceAbsolute)
+{
+	if (distanceAbsolute < THROW_RADIUS)
+		return (-1 * MAX_INITIAL_SPEED *((mouseYPosition - yPosition) / THROW_RADIUS));
+	return (-1 * MAX_INITIAL_SPEED *((mouseYPosition - yPosition) / distanceAbsolute));	
+}
+
+void Taw::calculateInitialVelocity(Point mousePosition)
+{
+	float distanceAbsolute = measureAbsolute(mousePosition);
+		initialVelocityX = measureInitialVelocityX(mousePosition.x, distanceAbsolute);
+		initialVelocityY = measureInitialVelocityY(mousePosition.y, distanceAbsolute);
+}
