@@ -29,6 +29,5 @@ private:
 
 int main()
 {
-
 	Game();
 }

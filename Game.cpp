@@ -8,47 +8,36 @@ Game::Game()
 	ball.putInitialBall(window);
 	intitialTawsPosition(window);
 	startGame(window);
-
 }
 
-void Game::newRedTaw(Taw taw)
+void Game::newTaw(Taw taw)
 {
-	redTaws.push_back(taw);
-}
-void Game::intitialRedTawsPosition(Window *window)
-{
-	newRedTaw(Taw(300, 290, "R0", window));
-	newRedTaw(Taw(350, 140, "R1", window));
-	newRedTaw(Taw(350, 440, "R2", window));
-	newRedTaw(Taw(100, 290, "R3", window));
-	newRedTaw(Taw(200, 290, "R4", window));
-}
-
-void Game::newGreenTaw(Taw taw)
-{
-	greenTaws.push_back(taw);
-}
-
-void Game::intitialGreenTawsPosition(Window *window)
-{
-	newGreenTaw(Taw(600, 290, "G0", window));
-	newGreenTaw(Taw(550, 140, "G1", window));
-	newGreenTaw(Taw(550, 440, "G2", window));
-	newGreenTaw(Taw(800, 290, "G3", window));
-	newGreenTaw(Taw(700, 290, "G4", window));
+	taws.push_back(taw);
 }
 
 void Game::intitialTawsPosition(Window *window)
 {
-	intitialGreenTawsPosition(window);
-	intitialRedTawsPosition(window);
+	newTaw(Taw(300, 290, "R0", window));
+	newTaw(Taw(350, 140, "R1", window));
+	newTaw(Taw(350, 440, "R2", window));
+	newTaw(Taw(100, 290, "R3", window));
+	newTaw(Taw(200, 290, "R4", window));
+	newTaw(Taw(600, 290, "G0", window));
+	newTaw(Taw(550, 140, "G1", window));
+	newTaw(Taw(550, 440, "G2", window));
+	newTaw(Taw(800, 290, "G3", window));
+	newTaw(Taw(700, 290, "G4", window));
 }
 
 bool Game::isGoodPosition(Point mousePosition)
 {
 	for (int taw = 0; taw < TAWS_NUMBER; taw++)
-		if (redTaws[taw].isChosenTaw(mousePosition))
+	{
+		if (taws[taw].isChosenTaw(mousePosition))
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
@@ -59,50 +48,135 @@ bool Game::isGoodPosition(Point mousePosition)
 Taw* Game::findTaw(Point mousePosition)
 {
 	for (int taw = 0; taw < TAWS_NUMBER; taw++)
-		if (redTaws[taw].isChosenTaw(mousePosition))
-			return &redTaws[taw];
-	for (int taw = 0; taw < TAWS_NUMBER; taw++)
-		if (greenTaws[taw].isChosenTaw(mousePosition))
-			return &greenTaws[taw];		
+		if (taws[taw].isChosenTaw(mousePosition))
+			return &taws[taw];	
 }
 
-void Game::startShootingProccess(Point mousePosition, Taw* chosenTaw)
+float Game::caclulateDistanceBetweenTwoTaws(Taw taw1, Taw taw2)
 {
-	chosenTaw->calculateInitialVelocity(mousePosition);
-	//shootingTaw(mousePosition, chosenTaw);
+	return sqrt(pow(taw1.getX() - taw2.getX(), 2) + pow(taw1.getY() - taw2.getY(), 2));
+}
+
+bool Game::areTheseSmashed(Taw taw1, Taw taw2)
+{
+	float tawsDistance = caclulateDistanceBetweenTwoTaws(taw1, taw2);
+	if (tawsDistance <= 2 * TAW_RADIUS)
+		return true;
+	return false;
+}
+
+vector <vector <Taw*> > Game::findSmashedTaws()
+{
+	vector <vector <Taw*> > smashedTaws;
+	for (int i = 0; i < TAWS_NUMBER; i++)
+	{
+		for (int j = 0; j < TAWS_NUMBER; j++)
+		{
+			if (areTheseSmashed(taws[i], taws[j]))
+			{
+				vector <Taw*> pairOfSmashedTaws;
+				pairOfSmashedTaws.push_back(&taws[i]);
+				pairOfSmashedTaws.push_back(&taws[j]);
+				smashedTaws.push_back(pairOfSmashedTaws);
+			}
+		}
+	}
+	return smashedTaws;
+}
+
+float Game::findDistanceBetweenTawAndBall(Taw taw)
+{
+	return sqrt(pow(taw.getX() - ball.getX(), 2) + pow(taw.getY() - ball.getY(), 2));
+}
+
+bool Game::isSmashedToBall(Taw taw)
+{
+	float distanceBetweenTawAndBall = findDistanceBetweenTawAndBall(taw);
+	if (distanceBetweenTawAndBall <= TAW_RADIUS + BALL_RADIUS)
+		return true;
+	return false;
+}
+
+Taw* Game::findSmashedTawToBall()
+{
+	for (int i = 0; i < TAWS_NUMBER; i++)
+		if (isSmashedToBall(taws[i]))
+			return &taws[i];
+}
+
+void Game::updateAllTawsPosotions()
+{
+	for (int i = 0; i < TAWS_NUMBER; i++)
+		taws[i].updatePosition();
+}
+
+void Game::update()
+{
+	while(true)
+	{
+		chosenTaw->updatePosition();
+		vector <vector <Taw*> > smashedTaws = findSmashedTaws();
+		Taw* smashedToBall = findSmashedTawToBall();
+		handleSmashedTaw(smashedTaws);
+		handleSmashedBall(smashedToBall);
+		updateAllTawsPosotions();
+		ball.updatePosition();
+	}
+
+}
+
+void Game::draw(Window *window)
+{
+	window->clear();
+	gamefield.buildGamefield(window);
+	ball.drawBall(window);
+	for (int i = 0; i < TAWS_NUMBER; i++)
+		taws[i].drawTaw(window);
+	window->update_screen();
 }
 
 void Game::startGame(Window *window)
 {
 	while(true)
 	{
-		update(window);
-		window->update_screen();
+		handleEvents(window);
+		if (goodPosition == true)
+			update();
+		draw(window);
+		delay(40);
 	}
 }
-void Game::update(Window *window)
+
+void Game::handleEvents(Window *window)
 {
 	while (window->has_pending_event())
 	{
 		Event event = window->poll_for_event();
 		switch (event.get_type())
 		{
-			case Event::EventType::QUIT:
+			case Event::QUIT:
+			{
 				exit(0);
 				break;
-			case Event::EventType::LCLICK:
+			}
+			case Event::LCLICK:
+			{
+				goodPosition = false;	
 				Point mousePosition = event.get_mouse_position();
-				bool goodPosition = false;
 				if(isGoodPosition(mousePosition))
 				{
 					goodPosition = true;
-					//Taw* chosenTaw = findTaw(mousePosition);
+					chosenTaw = findTaw(mousePosition);
 				}
 				break;
-		//	case Event::EventType::RCLICK:
-		//		Point mousePosition = event.get_mouse_position();
-		//		if (goodPosition == true)
-		//			startShootingProccess(mousePosition, chosenTaw);
+			}
+			case Event::LRELEASE:
+			{
+				Point releaseMousePosition = event.get_mouse_position();
+				if (goodPosition == true)
+					chosenTaw->calculateInitialVelocity(releaseMousePosition);
+				break;
+			}
 		}
 	}
 }

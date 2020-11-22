@@ -7,12 +7,15 @@ class Ball
 {
 public:
 	void putInitialBall(Window *window);
+	void drawBall(Window *window);
+	int getX();
+	int getY();
 private:
 	int xPosition;
 	int yPosition;
 	int acceleration;
-	int initialVelocityX;
-	int initialVelocityY;
+	int VelocityX;
+	int VelocityY;
 	bool movingStatus;
 };
 

@@ -13,25 +13,30 @@ public:
 	Game();
 private:
 
-	void newRedTaw(Taw taw);
-	void intitialRedTawsPosition(Window *window);
-	void newGreenTaw(Taw taw);
-	void intitialGreenTawsPosition(Window *window);
+	void newTaw(Taw taw);
 	void intitialTawsPosition(Window *window);
 	bool isGoodPosition(Point mousePosition);
 	Taw* findTaw(Point mousePosition);
-	void startShootingProccess(Point mousePosition, Taw* chosenTaw);
+	void update();
 	void startGame(Window *window);
-	void update(Window *window);
+	void handleEvents(Window *window);
+	void draw(Window *window);
+	float caclulateDistanceBetweenTwoTaws(Taw taw1, Taw taw2);
+	bool areTheseSmashed(Taw taw1, Taw taw2);
+	vector <vector <Taw*> > findSmashedTaws();
+	bool isSmashedToBall(Taw taw);
+	Taw* findSmashedTawToBall();
+	float findDistanceBetweenTawAndBall(Taw taw);
 
 	GameField gamefield;
 	Goal redsGoal;
 	Goal bluesGoal;
 	Ball ball;
-	Player *redPlayer;
-	Player *bluePlayer;
-	vector <Taw> redTaws;
-	vector <Taw> greenTaws;
+	Player redPlayer;
+	Player bluePlayer;
+	vector <Taw> taws;
+	Taw* chosenTaw;
+	bool goodPosition = false;
 };
 
 #endif
