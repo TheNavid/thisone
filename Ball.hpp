@@ -10,12 +10,20 @@ public:
 	void drawBall(Window *window);
 	int getX();
 	int getY();
+	int getVx();
+	int getVy();
+	void updatePosition();
+	bool isStopped();
+	void setNewSpeed(float newVx, float newVy);
 private:
+	void smashingToWall();
+	void calculateNewVelocity();
+	float absoluteVelocity();
+
 	int xPosition;
 	int yPosition;
-	int acceleration;
-	int VelocityX;
-	int VelocityY;
+	int Vx;
+	int Vy;
 	bool movingStatus;
 };
 

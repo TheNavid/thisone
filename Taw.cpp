@@ -85,9 +85,10 @@ string Taw::getID()
 }
 
 
-void Taw::smashingToTopWall()
+void Taw::smashingToWall()
 {
-	//while (yPosition - TAW_RADIUS <= GAEMFIELD_INITIAL_Y || yPosition + TAW_RADIUS >= GAEMFIELD_INITIAL_Y + GAEMFIELD_LENGHT || xPosition - TAW_RADIUS <= GAEMFIELD_INITIAL_X || xPosition + TAW_RADIUS >= GAEMFIELD_INITIAL_X + GAMEFIELD_WIDTH)
+	//while (yPosition <= GAEMFIELD_INITIAL_Y || yPosition >= GAEMFIELD_INITIAL_Y + GAEMFIELD_LENGHT || xPosition <= GAEMFIELD_INITIAL_X || xPosition >= GAEMFIELD_INITIAL_X + GAMEFIELD_WIDTH)
+	//{
 		if (yPosition < GAEMFIELD_INITIAL_Y)
 		{
 			Vy = -Vy;
@@ -113,13 +114,14 @@ void Taw::smashingToTopWall()
 			Vy = Vy;
 			Vx = Vx;
 		}	
+	//}
 }
 void Taw::updatePosition()
 {
 	//printInfo();
 	xPosition = xPosition + Vx;
 	yPosition = yPosition + Vy;
-	smashingToTopWall();
+	smashingToWall();
 	calculateNewVelocity();
 }
 
@@ -164,4 +166,20 @@ int Taw::getX()
 int Taw::getY()
 {
 	return yPosition;
+}
+
+int Taw::getVx()
+{
+	return Vx;
+}
+
+int Taw::getVy()
+{
+	return Vy;
+}
+
+void Taw::setNewSpeed(float newVx, float newVy)
+{
+	Vx = Vx - newVx;
+	Vy = Vy - newVy;
 }

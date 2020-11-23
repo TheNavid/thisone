@@ -15,6 +15,10 @@ public:
 	void updatePosition();
 	int getX();
 	int getY();
+	bool isStopped();
+	int getVx();
+	int getVy();
+	void setNewSpeed(float newVx, float newVy);
 private:
 	bool isXInRange(int x, int y);
 	bool isYInRange(int x, int y);
@@ -23,8 +27,7 @@ private:
 	float measureInitialVelocityY (int mouseYPosition, float distanceAbsolute);
 	void calculateNewVelocity();
 	float absoluteVelocity();
-	bool isStopped();
-	void smashingToTopWall();
+	void smashingToWall();
 
 	int xPosition;
 	int yPosition;
