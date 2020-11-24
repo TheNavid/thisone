@@ -39,4 +39,19 @@ using namespace std;
 #define THROW_RADIUS 60
 #define ACCELERATION 2
 
+
+#define GOAL_LEFT_X 50
+#define GOAL_RIGHT_X 850
+
+#define GOAL_Y_UPPER_BOUND 370 
+#define GOAL_Y_LOWER_BOUND 210
+
+
+#define RED 1
+#define BLUE 2
+
+
+const int DEFAULT_X[] = {300,350,350,100,200,600,550,550,800,700};
+const int DEFAULT_Y[] = {290,140,440,290,290,290,140,440,290,290};
+
 #endif

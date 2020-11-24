@@ -3,12 +3,24 @@
 
 Game::Game()
 {
+
+	initVariables();
+
 	Window *window = new Window(WINDOW_WIDTH, WINDOW_LENGHT, "Soccer Stars");
 	gamefield.buildGamefield(window);
 	ball.putInitialBall(window);
 	intitialTawsPosition(window);
 	startGame(window);
 }
+
+
+void Game::initVariables()
+{
+	blueScores =0;
+	redScores = 0;
+	currentTeam = RED;
+}
+
 
 void Game::newTaw(Taw taw)
 {
@@ -17,7 +29,7 @@ void Game::newTaw(Taw taw)
 
 void Game::intitialTawsPosition(Window *window)
 {
-	newTaw(Taw(300, 290, "R0", window));
+	newTaw(Taw(300, 290, "R0", window)); 
 	newTaw(Taw(350, 140, "R1", window));
 	newTaw(Taw(350, 440, "R2", window));
 	newTaw(Taw(100, 290, "R3", window));
@@ -44,6 +56,49 @@ bool Game::isGoodPosition(Point mousePosition)
 //void shootingTaw()
 //{
 //}
+
+int Game::getTeam(Taw taw)
+{
+
+}
+
+
+
+void Game::switchTurn()
+{
+	currentTeam = (currentTeam +1) %2;
+}
+
+void Game::addScore()
+{
+	if(currentTeam == RED)
+	{
+		redScores++;
+	}
+	else
+	{
+		blueScores++;
+	}
+}
+
+
+void Game::resetWindow()
+{
+	for(int i=0; i<taws.size(); i++)
+	{
+		taws[i].setX(DEFAULT_X[i]);
+		taws[i].setY(DEFAULT_Y[i]);
+	}
+}
+
+
+bool Game::isGoal(float ballX, float ballY)
+{
+	return ( ballX < GOAL_LEFT_X || ballX > GOAL_RIGHT_X) && 
+		(ballY < GOAL_Y_UPPER_BOUND && ballY > GOAL_Y_LOWER_BOUND);
+}
+
+
 
 Taw* Game::findTaw(Point mousePosition)
 {
@@ -141,19 +196,22 @@ float Game::calculateDotProduct(float n1, float n2, float n3, float n4)
 
 void Game::calculateTawSpeedAfterSmash(Taw* taw)
 {
+
 	float M = 4 / 3;
-	float dotProduct = calculateDotProduct(taw->getVx() - ball.getVx(), taw->getX() - ball.getX(), taw->getVy() - ball.getVy(), taw->getY() - ball.getY());
+	float dotProduct = calculateDotProduct(taw->getVx() - ball.getVx(), 
+		taw->getX() - ball.getX(), taw->getVy() - ball.getVy(), taw->getY() - ball.getY());
 	float squareDistance = pow(findDistanceBetweenTawAndBall2(taw), 2);
 	float temp = dotProduct / squareDistance;
-	float newVx = M * temp * (taw->getX() - ball.getX());
+	float newVx = M * temp * ((taw->getX()+TAW_RADIUS) - (ball.getX()+BALL_RADIUS));
 	float newVy = M * temp * (taw->getY() - ball.getY());
+	cout << "New ball speed: " << newVx << " " << newVy << endl;
 	taw->setNewSpeed(newVx, newVy);
 	taw->updatePosition();
 }
 
 void Game::calculateBallSpeedAfterSmash(Taw* taw)
 {
-	float M = 3 / 3;
+	float M = 4 / 3;
 	float dotProduct = calculateDotProduct(ball.getVx() - taw->getVx(), ball.getX() - taw->getX(), ball.getVy() - taw->getVy(), ball.getY() - taw->getY());
 	float squareDistance = pow(findDistanceBetweenTawAndBall2(taw), 2);
 	float temp = dotProduct / squareDistance;
@@ -210,6 +268,15 @@ void Game::update()
 	{
 		findSmashedTaws();
 		findSmashedTawToBall();
+
+		// maybe should be moved
+		if(isGoal(ball.getX(), ball.getY()))
+		{
+			cout << ball.getX() << "  " << ball.getY() << endl;
+			cout << "Goal!" << endl;
+			addScore();
+			resetWindow();
+		}
 	}
 
 }
@@ -229,7 +296,7 @@ void Game::startGame(Window *window)
 	while(true)
 	{
 		handleEvents(window);
-		if (goodPosition == true)
+		if (goodPosition)
 			update();
 		draw(window);
 		delay(40);

@@ -39,6 +39,16 @@ private:
 	void handleSmashedTaw(Taw* taw1, Taw* taw2);
 	float caclulateDistanceBetweenTwoTaws2(Taw* taw1, Taw* taw2);
 
+	void resetWindow();
+	void initVariables();
+	void addScore();
+	bool isGoal(float ballX, float ballY);
+	void switchTurn();
+
+	int blueScores;
+	int redScores;
+	int currentTeam;
+	int getTeam(Taw taw);
 	GameField gamefield;
 	Goal redsGoal;
 	Goal bluesGoal;

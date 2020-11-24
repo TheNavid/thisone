@@ -16,8 +16,13 @@ public:
 	int getX();
 	int getY();
 	bool isStopped();
-	int getVx();
-	int getVy();
+	float getVx();
+	float getVy();
+
+	void setX(int newX);
+	void setY(int newY);
+
+
 	void setNewSpeed(float newVx, float newVy);
 private:
 	bool isXInRange(int x, int y);
@@ -29,8 +34,8 @@ private:
 	float absoluteVelocity();
 	void smashingToWall();
 
-	int xPosition;
-	int yPosition;
+	float xPosition;
+	float yPosition;
 	float Vx;
 	float Vy;
 	string ID;
@@ -38,3 +43,7 @@ private:
 };
 
 #endif
+
+
+
+
