@@ -183,14 +183,3 @@ void Taw::setNewSpeed(float newVx, float newVy)
 	Vx = Vx - newVx;
 	Vy = Vy - newVy;
 }
-
-
-void Taw::setX(int newX)
-{
-	xPosition = newX;
-}
-
-void Taw::setY(int newY)
-{
-	yPosition = newY;
-}
